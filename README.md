@@ -1,1 +1,1 @@
-# es teh solo ryo.github.io
+#ryo.github.io
