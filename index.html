@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teh Solo</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    overflow:hidden;
+    color:white;
+}
+
+.container{
+    display:flex;
+    width:300vw;
+    height:100vh;
+    transition:transform 0.8s ease-in-out;
+}
+
+.screen{
+    width:100vw;
+    height:100vh;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Screen 1 */
+.screen1{
+    background:linear-gradient(135deg,#2d6a4f,#52b788);
+}
+
+/* Screen 2 */
+.screen2{
+    background:linear-gradient(-45deg,#ff9a9e,#a1ffce,#a6c1ee);
+    overflow-y:auto;
+    padding-top:20px;
+}
+
+/* Screen 3 */
+.screen3{
+    background:linear-gradient(135deg,#1d3557,#457b9d);
+    padding:20px;
+    overflow-y:auto;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+button:active{
+    transform:scale(0.9);
+}
+
+.menu{
+    background:rgba(0,0,0,0.5);
+    padding:15px;
+    border-radius:15px;
+    margin:10px;
+    width:250px;
+}
+
+.menu-container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+input, select{
+    padding:8px;
+    border-radius:5px;
+    border:none;
+    margin:5px 0;
+    width:80%;
+}
+
+.qr{
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="container">
+
+<!-- LAYAR 1 -->
+<div class="screen screen1">
+    <h1>Selamat Datang di Teh Solo 🍹</h1>
+    <button onclick="goMenu()">Silahkan Memesan</button>
+</div>
+
+<!-- LAYAR 2 MENU -->
+<div class="screen screen2">
+<h2>Menu Teh Solo</h2>
+
+<div class="menu-container">
+
+<div class="menu">
+<h3>Es Teh Manis Cup Mini</h3>
+<p>Rp 5.000</p>
+<button onclick="pilihMenu('Es Teh Manis Cup Mini',5000)">Pesan</button>
+</div>
+
+<div class="menu">
+<h3>Es Teh Manis Cup Besar</h3>
+<p>Rp 10.000</p>
+<button onclick="pilihMenu('Es Teh Manis Cup Besar',10000)">Pesan</button>
+</div>
+
+<div class="menu">
+<h3>Es Teh Leci</h3>
+<p>Rp 15.000</p>
+<button onclick="pilihMenu('Es Teh Leci',15000)">Pesan</button>
+</div>
+
+<div class="menu">
+<h3>Es Teh Lemon</h3>
+<p>Rp 15.000</p>
+<button onclick="pilihMenu('Es Teh Lemon',15000)">Pesan</button>
+</div>
+
+<div class="menu">
+<h3>Es Teh Hijau</h3>
+<p>Rp 15.000</p>
+<button onclick="pilihMenu('Es Teh Hijau',15000)">Pesan</button>
+</div>
+
+</div>
+</div>
+
+<!-- LAYAR 3 CHECKOUT -->
+<div class="screen screen3">
+
+<h2>Checkout</h2>
+
+<p id="detailMenu"></p>
+
+<input type="text" id="nama" placeholder="Nama Anda">
+<input type="text" id="alamat" placeholder="Alamat Rumah">
+<input type="number" id="jumlah" value="1" min="1" onchange="updateTotal()">
+
+<p id="totalBayar"></p>
+
+<select id="metode" onchange="showQR()">
+<option value="">Pilih Metode Pembayaran</option>
+<option value="COD">COD</option>
+<option value="GoPay">GoPay</option>
+<option value="DANA">DANA</option>
+<option value="OVO">OVO</option>
+</select>
+
+<div class="qr" id="qrArea"></div>
+
+<button onclick="kirimPesanan()">Kirim Pesanan</button>
+
+</div>
+
+</div>
+
+<script>
+let menuDipilih="";
+let hargaMenu=0;
+
+function goMenu(){
+    document.getElementById("container").style.transform="translateX(-100vw)";
+}
+
+function pilihMenu(nama,harga){
+    menuDipilih=nama;
+    hargaMenu=harga;
+    document.getElementById("detailMenu").innerHTML="Pesanan: "+nama;
+    updateTotal();
+    document.getElementById("container").style.transform="translateX(-200vw)";
+}
+
+function updateTotal(){
+    let jumlah=document.getElementById("jumlah").value;
+    let total=jumlah*hargaMenu;
+    document.getElementById("totalBayar").innerHTML=
+    "Total Bayar: Rp "+total.toLocaleString("id-ID");
+}
+
+function showQR(){
+    let metode=document.getElementById("metode").value;
+    let qrArea=document.getElementById("qrArea");
+
+    if(metode=="DANA" || metode=="OVO"){
+        let dummyQR="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pembayaran%20"+metode+"%20TehSolo";
+        qrArea.innerHTML="<p>Scan QR "+metode+"</p><img src='"+dummyQR+"'>";
+    }else{
+        qrArea.innerHTML="";
+    }
+}
+
+function kirimPesanan(){
+    let nama=document.getElementById("nama").value;
+    let alamat=document.getElementById("alamat").value;
+    let jumlah=document.getElementById("jumlah").value;
+    let metode=document.getElementById("metode").value;
+    let total=jumlah*hargaMenu;
+
+    if(navigator.vibrate){navigator.vibrate(100);}
+
+    let phone="6285891609169";
+
+    let pesan=
+    "=== PESANAN BARU TEH SOLO ===%0A"+
+    "Nama: "+nama+"%0A"+
+    "Alamat: "+alamat+"%0A"+
+    "Menu: "+menuDipilih+"%0A"+
+    "Jumlah: "+jumlah+"%0A"+
+    "Metode Bayar: "+metode+"%0A"+
+    "Total: Rp "+total.toLocaleString("id-ID");
+
+    let url="https://wa.me/"+phone+"?text="+pesan;
+
+    window.open(url,"_blank");
+}
+</script>
+
+</body>
+</html>
