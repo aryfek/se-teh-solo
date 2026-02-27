@@ -1,1 +1,1 @@
-# se-teh-solo
+# es teh solo ryo
